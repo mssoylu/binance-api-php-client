@@ -1,0 +1,4 @@
+.idea
+vendor
+public/vendor
+public/connect.json
