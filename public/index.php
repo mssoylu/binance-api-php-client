@@ -3,6 +3,7 @@ include 'connect.php';
 
 $ticker = $api->prices();
 $balances = $api->balances($ticker);
+
 ?>
 <html lang="">
 <head>
@@ -10,12 +11,12 @@ $balances = $api->balances($ticker);
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
-<body>
+<body style=" background-color: #f0f0f0">
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-3">
 
-            <h1>Total</h1>
+            <h1>Kasa Toplam</h1>
             <hr>
             <h2 class="text-success"><?= accountTotalAsUSDT($ticker, $balances); ?> USDT</h2>
 
@@ -29,7 +30,6 @@ $balances = $api->balances($ticker);
                 </tr>
                 </thead>
                 <tbody>
-
                 <?php
                 $bnbArr = [];
                 $graphCoin = [];
@@ -51,7 +51,6 @@ $balances = $api->balances($ticker);
             <hr>
             <div class="p-3 <?php if ($bnbArr['USDT'] < 10) echo 'bg-danger'; elseif ($bnbArr['USDT'] < 20) echo 'bg-warning'; else echo 'bg-success' ?>">
                 <?= number_format($bnbArr['amount'], 2) ?> BNB / <strong><?= $bnbArr['USDT'] ?> USDT</strong>
-
                 <?php
                 if ($bnbArr['USDT'] < 20) { ?>
                     <hr>
@@ -62,6 +61,7 @@ $balances = $api->balances($ticker);
         </div>
 
         <div class="col-md-6">
+            <h1><?= $_GET['coin'] ?></h1>
             <!-- TradingView Widget BEGIN -->
             <div class="tradingview-widget-container">
                 <div id="tradingview_54401"></div>
@@ -93,7 +93,6 @@ $balances = $api->balances($ticker);
                 </script>
             </div>
             <!-- TradingView Widget END -->
-
         </div>
 
         <div class="col-3">
@@ -110,13 +109,23 @@ $balances = $api->balances($ticker);
                             <input type="text" placeholder="Filtre" id="listcoin-filter" class="form-control">
                         </th>
                     </tr>
+                    <tr>
+                        <th colspan="2">
+                            <a class="filterCoinButton" href="javascript:void(0);" data-coin="USDT"
+                               class="btn btn-primary btn-sm">USDT</a>
+                            <a class="filterCoinButton" href="javascript:void(0);" data-coin="BTC"
+                               class="btn btn-primary btn-sm">BTC</a>
+                            <a class="filterCoinButton" href="javascript:void(0);" data-coin="BNB"
+                               class="btn btn-primary btn-sm">BNB</a>
+                        </th>
+                    </tr>
                     </thead>
                     <tbody>
                     <?php
                     $listCoins = $ticker;
                     ksort($listCoins);
                     foreach ($listCoins as $coin => $row) {
-                        if (stristr($coin, 'USDT')) {
+                        if (stristr($coin, 'USDT') or stristr($coin, 'BTC') or stristr($coin, 'BNB')) {
                             echo '<tr onclick="location.href = \'index.php?coin=' . $coin . 'USDT\';">';
                             echo '<td><code class="text-dark"><a class="hover" href="index.php?coin=' . $coin . '">' . $coin . '</a></code></td>';
                             echo '<td class="text-right"><code class="text-dark">' . $row . '</td>';
@@ -147,6 +156,10 @@ $balances = $api->balances($ticker);
     (function ($) {
         $(document).ready(function () {
             $('#listCoinTable').filterTable('#listcoin-filter');
+            $('.filterCoinButton').click(function (e) {
+                alert($(this).data('coin'));
+                $('#listCoinTable').filterTable($(this).data('coin'));
+            });
         });
     })(jQuery);
 

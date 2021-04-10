@@ -10,9 +10,14 @@
 function accountTotalAsUSDT($ticker, $balances)
 {
     $total = 0;
+
     foreach ($balances as $coin => $balance) {
         $total += ($balance['available'] + $balance['onOrder']) * $ticker[$coin . 'USDT'];
     }
+
+    $total += $balances['USDT']['available'];
+    $total += $balances['USDT']['onOrder'];
+
     return number_format($total, 0);
 }
 
